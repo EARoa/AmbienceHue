@@ -5,11 +5,13 @@ from phue import Bridge
 import Quartz.CoreGraphics as CG
 import colorsys
 
-BRIDGE_IP = '192.168.0.10'
-LEFT_LIGHT = 2
-RIGHT_LIGHT  = 0
-# LEFT_LIGHT = 3
-# RIGHT_LIGHT  = 2
+BRIDGE_IP = '10.0.0.15'
+LIGHT_ONE = 2
+LIGHT_TWO  = 0
+LIGHT_THREE  = 1
+# LIGHT_ONE = 3
+# LIGHT_TWO  = 2
+# LIGHT_THREE  = 0
 TRANSITION_TIME = 0.1
 
 class ScreenPixel(object):
@@ -17,7 +19,7 @@ class ScreenPixel(object):
         if region is None:
             region = CG.CGRectInfinite
         else:
-            
+
             if region.size.width % 2 > 0:
                 emsg = "Capture region width should be even (was %s)" % (
                     region.size.width)
@@ -69,16 +71,19 @@ if __name__ == '__main__':
     b.set_light(3, 'on', True)
     b.set_light(1, 'on', True)
     lights = b.lights
-    lights[LEFT_LIGHT].transitiontime = TRANSITION_TIME
-    lights[RIGHT_LIGHT].transitiontime = TRANSITION_TIME
+    lights[LIGHT_ONE].transitiontime = TRANSITION_TIME
+    lights[LIGHT_TWO].transitiontime = TRANSITION_TIME
+    lights[LIGHT_THREE].transitiontime = TRANSITION_TIME
 
-    lights[LEFT_LIGHT].on = True
-    lights[RIGHT_LIGHT].on = True
+
+    lights[LIGHT_ONE].on = True
+    lights[LIGHT_TWO].on = True
+    lights[LIGHT_THREE].on = True
 
     sp = ScreenPixel()
     sp.capture()
 
-    COL_INTERVAL = 50
+    COL_INTERVAL = 100
     ROW_INTERVAL = 100
     WIDTH = sp.width/20
     HEIGHT = sp.height
@@ -88,18 +93,18 @@ if __name__ == '__main__':
     print "Rows being processed:\t", int(HEIGHT / ROW_INTERVAL)
     print "Cols being processed:\t", int(WIDTH / COL_INTERVAL)
     print "Pixels being processed:\t", int(WIDTH / COL_INTERVAL) * int(HEIGHT / ROW_INTERVAL)
-    
+
     i = 0
     while True:
         ++i
-        # if (i%100 == 0): 
+        # if (i%100 == 0):
         #     b.connect()
         # with timer ("Capture"):
         sp.capture()
         avg_r = 0
         avg_g = 0
         avg_b = 0
-        # with timer("Computation time:\t"): 
+        # with timer("Computation time:\t"):
 
         avg_r = 0
         avg_g = 0
@@ -117,10 +122,10 @@ if __name__ == '__main__':
         avg_b = avg_b / (WIDTH * HEIGHT / COL_INTERVAL / ROW_INTERVAL)
         h, s, v = colorsys.rgb_to_hsv((avg_r+0.0)/255, (avg_g+0.0)/255, (avg_b+0.0)/255)
         command = {'hue': int(h * 65535), 'sat': int(s * 255), 'bri': int(v * 255)}
-        
+
         # print "\nLeft HSV: ", h, s, v
         # print "Left RGB: ", avg_r, avg_g, avg_b
-        b.set_light(LEFT_LIGHT+1, command)
+        b.set_light(LIGHT_ONE+1, command)
 
         avg_r = 0
         avg_g = 0
@@ -138,26 +143,8 @@ if __name__ == '__main__':
         avg_b = avg_b / (WIDTH * HEIGHT / COL_INTERVAL / ROW_INTERVAL)
         h, s, v = colorsys.rgb_to_hsv((avg_r+0.0)/255, (avg_g+0.0)/255, (avg_b+0.0)/255)
         command = {'hue': int(h * 65535), 'sat': int(s * 255), 'bri': int(v * 255)}
-        
+
         # print "\nRight HSV: ", h, s, v
         # print "Right RGB: ", avg_r, avg_g, avg_b
-        b.set_light(RIGHT_LIGHT+1, command)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        b.set_light(LIGHT_TWO+1, command)
+        b.set_light(LIGHT_THREE+1, command)
